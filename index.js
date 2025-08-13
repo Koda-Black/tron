@@ -3,30 +3,51 @@ const TronWeb = require("tronweb");
 const app = express();
 app.use(express.json());
 const router = express.Router();
-// Add headers
-app.use(function (req, res, next) {
-  // Website you wish to allow to connect
-  res.setHeader("Access-Control-Allow-Origin", "*");
 
-  // Request methods you wish to allow
+const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
+
+// Security headers middleware
+app.use((req, res, next) => {
+  const csp = `
+    default-src 'self' https://api.trongrid.io;
+    script-src 'self' 'unsafe-inline' https://cdn.lgrckt-in.com https://unpkg.com;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src 'self' https://fonts.gstatic.com;
+    img-src 'self' data: https://chart.googleapis.com https://api.qrserver.com https://your-express-domain.com;
+    connect-src 'self' https://api.trongrid.io https://tron-api.live https://api.nileex.io;
+    frame-src 'none';
+    object-src 'none';
+  `
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+  res.setHeader("Content-Security-Policy", csp);
+  next();
+});
+
+// CORS middleware
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
   );
-
-  // Request headers you wish to allow
   res.setHeader(
     "Access-Control-Allow-Headers",
     "X-Requested-With,content-type"
   );
-
-  // Set to true if you need the website to include cookies in the requests sent
-  // to the API (e.g. in case you use sessions)
   res.setHeader("Access-Control-Allow-Credentials", true);
-
-  // Pass to next layer of middleware
   next();
 });
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
+app.use(limiter);
+app.use(helmet.hsts({ maxAge: 31536000, includeSubDomains: true }));
 
 app.get("/", (req, res) => {
   res.json({ message: "ok" });
@@ -135,8 +156,9 @@ app.get("/usdt_balance/:id", async (req, res) => {
     //Use call to execute a pure or view smart contract method.
     // These methods do not modify the blockchain, do not cost anything to execute and are also not broadcasted to the network.
     var result = await contract.balanceOf(address).call();
-    var nnn = JSON.parse(result);
-    var balance = nnn / 1000000;
+    // var nnn = JSON.parse(result);
+    // var balance = nnn / 1000000;
+    const balance = result.toString() / 1000000;
     var status = "success";
     // tronWeb.toDecimal('0x15') you can also use this to convert hexadecimal
     // console.log('result: ', result);
