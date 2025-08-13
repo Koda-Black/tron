@@ -64,9 +64,9 @@ app.use((err, req, res, next) => {
 const tronWeb = new TronWeb({
   // fullHost: 'https://api.shasta.trongrid.io', //testnet
   fullHost: "https://api.trongrid.io", //mainnet
-  headers: { "TRON-PRO-API-KEY": "6432c721-bc2d-4c41-906f-b10809fc0356" },
+  headers: { "TRON-PRO-API-KEY": "e82ca78f-bac3-44a7-b982-7913d688f50c" },
   privateKey:
-    "ceef8af1967a9e630a17e6b95fd4318b57530ff6333f47f0b8d4fa85c6138384", //mainnet
+    "772e7654d872f36d828c02776f21e4928ef53ad6de6b53966fbbb23753c2add2", //mainnet
   // privateKey: '6344e5bce5084e360c8f1217fbe1f59fbee4b284d497b28f4c8dab0fbcaecbb0' //testnet
 });
 
