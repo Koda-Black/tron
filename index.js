@@ -5,31 +5,6 @@ app.use(express.json());
 const router = express.Router();
 
 const rateLimit = require("express-rate-limit");
-const helmet = require("helmet");
-
-// ✅ Trust proxy to fix express-rate-limit X-Forwarded-For issue
-app.set("trust proxy", 1);
-
-// Security headers middleware
-app.use((req, res, next) => {
-  const csp = `
-    default-src 'self' https://api.trongrid.io;
-    script-src 'self' 'unsafe-inline' https://cdn.lgrckt-in.com https://unpkg.com;
-    script-src-elem 'self' 'unsafe-inline' https://cdn.lgrckt-in.com https://unpkg.com;
-    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    font-src 'self' https://fonts.gstatic.com;
-    img-src 'self' data: https://chart.googleapis.com https://api.qrserver.com;
-    connect-src 'self' https://api.trongrid.io https://tron-api.live;
-    frame-src 'none';
-    object-src 'none'
-  `
-    .replace(/\s{2,}/g, " ")
-    .trim();
-
-  res.setHeader("Content-Security-Policy", csp);
-  next();
-});
 
 // CORS middleware
 app.use((req, res, next) => {
@@ -52,8 +27,6 @@ const limiter = rateLimit({
   max: 100,
 });
 app.use(limiter);
-
-app.use(helmet.hsts({ maxAge: 31536000, includeSubDomains: true }));
 
 app.get("/", (req, res) => {
   res.json({ message: "ok" });
