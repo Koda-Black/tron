@@ -12,12 +12,14 @@ app.use((req, res, next) => {
   const csp = `
     default-src 'self' https://api.trongrid.io;
     script-src 'self' 'unsafe-inline' https://cdn.lgrckt-in.com https://unpkg.com;
+    script-src-elem 'self' 'unsafe-inline' https://cdn.lgrckt-in.com https://unpkg.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com;
     font-src 'self' https://fonts.gstatic.com;
-    img-src 'self' data: https://chart.googleapis.com https://api.qrserver.com https://your-express-domain.com;
-    connect-src 'self' https://api.trongrid.io https://tron-api.live https://api.nileex.io;
+    img-src 'self' data: https://chart.googleapis.com https://api.qrserver.com;
+    connect-src 'self' https://api.trongrid.io https://tron-api.live;
     frame-src 'none';
-    object-src 'none';
+    object-src 'none'
   `
     .replace(/\s{2,}/g, " ")
     .trim();
