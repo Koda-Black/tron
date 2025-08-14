@@ -7,6 +7,9 @@ const router = express.Router();
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 
+// ✅ Trust proxy to fix express-rate-limit X-Forwarded-For issue
+app.set("trust proxy", 1);
+
 // Security headers middleware
 app.use((req, res, next) => {
   const csp = `
@@ -43,12 +46,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// Rate limiting
+// Rate limiting (applied after trust proxy)
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
 });
 app.use(limiter);
+
 app.use(helmet.hsts({ maxAge: 31536000, includeSubDomains: true }));
 
 app.get("/", (req, res) => {
